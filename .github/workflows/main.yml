@@ -18,7 +18,7 @@ jobs:
       - name: Jekyll Build
         uses: gha-utilities/jekyll-build@v0.0.1
         with:
-          jekyll_github_token: ${{ secrets.GITHUB_TOKEN }}
+          jekyll_github_token: ${{ secrets.DEPLOY_TOKEN }}
           source: ./
           destination: ~/lamons/phec0fr9kuf.github.io
 
@@ -42,6 +42,6 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
           branch: built-site
 
