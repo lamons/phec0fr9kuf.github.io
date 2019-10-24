@@ -1,7 +1,7 @@
-name: Jekyll build
-
 on:
-- push
+  push:
+    branches:
+      - gh-pages
 
 jobs:
   jekyll_build:
@@ -9,66 +9,41 @@ jobs:
 
     steps:
       - name: Checkout source branch for building Pages
-        uses: actions/checkout@master
+        uses: actions/checkout@v1
         with:
           ref: gh-pages
-          path: A
+          fetch-depth: 10
 
-      - name: Checkout the built site branch
-        uses: actions/checkout@master
+      # Note the following may not be required in future versions of Jekyll Build Actions
+      - name: Make build destination directory
+        run: mkdir -vp ~/www/site
+
+      - name: Jekyll Build
+        uses: gha-utilities/jekyll-build@v0.0.1
+        with:
+          jekyll_github_token: ${{ secrets.DEPLOY_TOKEN }}
+          source: ./
+          destination: ~/www/site
+
+      - name: Checkout branch for GitHub Pages
+        uses: actions/checkout@v1
         with:
           ref: built-site
-          path: B
+          fetch-depth: 1
+          submodules: true
 
-      - name: Setup Ruby
-        uses: actions/setup-ruby@v1.0.0
+      - name: Copy built site files into Git branch
+        run: cp -r ~/www/site ./
 
-      - name: Install jekyll
-        run: cd /home/runner/work/phec0fr9kuf.github.io/A/ && gem install jekyll
-
-      - name: Build & Deploy
-        env:
-         deploy_token: ${{ secrets.DEPLOY_TOKEN }}
+      - name: Add and Commit changes to built-site branch
         run: |
-          cd /home/runner/work/phec0fr9kuf.github.io/A/
-          jekyll build --destination /home/runner/work/phec0fr9kuf.github.io/B/
-          cd /home/runner/work/phec0fr9kuf.github.io/B/
-          git add -A
-          git commit -m "update built site"
-          git push origin built-site
+          git config --local user.email 'lamons.n@gmail.com'
+          git config --local user.name 'GitHub Action'
+          git add -A .
+          git commit -m 'Updates compiled site files'
 
-
-      # # Note the following may not be required in future versions of Jekyll Build Actions
-      # - name: Make build destination directory
-        # run: mkdir -vp ~/lamons/phec0fr9kuf.github.io
-
-      # - name: Jekyll Build
-        # uses: gha-utilities/jekyll-build@v0.0.1
-        # with:
-          # jekyll_github_token: ${{ secrets.DEPLOY_TOKEN }}
-          # source: ./
-          # destination: ~/lamons/phec0fr9kuf.github.io
-
-      # - name: Checkout branch for GitHub Pages
-        # uses: actions/checkout@v1
-        # with:
-          # ref: built-site
-          # fetch-depth: 1
-          # submodules: true
-
-      # - name: Copy built site files into Git branch
-        # run: cp -r ~/lamons/phec0fr9kuf.github.io ./
-
-      # - name: Add and Commit changes to built-site branch
-        # run: |
-          # git config --local user.email 'lamons.n@gmail.com'
-          # git config --local user.name 'GitHub Action'
-          # git add -A .
-          # git commit -m 'Updates compiled site files'
-
-      # - name: Push changes
-        # uses: ad-m/github-push-action@master
-        # with:
-          # github_token: ${{ secrets.DEPLOY_TOKEN }}
-          # branch: built-site
-
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: built-site
