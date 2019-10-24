@@ -26,11 +26,15 @@ jobs:
           destination: ~/www/phec0fr9kuf.github.io
 
       - name: Checkout branch for GitHub Pages
-        uses: actions/checkout@v1
-        with:
-          ref: built-site
-          fetch-depth: 1
-          submodules: true
+        env:
+          ACTIONS_DEPLOY_KEY: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$ACTIONS_DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 777 .sass-cache/
+          git fetch && git checkout built-site $GITHUB_SHA
 
       - name: Copy built site files into Git branch
         run: cp -r ~/www/phec0fr9kuf.github.io ./
