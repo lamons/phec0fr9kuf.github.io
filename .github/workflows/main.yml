@@ -1,9 +1,7 @@
-name: Jekyll build 
+name: Jekyll build
 
 on:
-  push:
-    branches:
-      - src-pages
+- push
 
 jobs:
   jekyll_build:
