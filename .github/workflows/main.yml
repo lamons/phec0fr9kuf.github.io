@@ -16,14 +16,14 @@ jobs:
 
       # Note the following may not be required in future versions of Jekyll Build Actions
       - name: Make build destination directory
-        run: mkdir -vp ~/www/site
+        run: mkdir -vp ~/www/phec0fr9kuf.github.io
 
       - name: Jekyll Build
         uses: gha-utilities/jekyll-build@v0.0.1
         with:
-          jekyll_github_token: ${{ secrets.DEPLOY_TOKEN }}
+          jekyll_github_token: ${{ secrets.JEKYLL_GITHUB_TOKEN }}
           source: ./
-          destination: ~/www/site
+          destination: ~/www/phec0fr9kuf.github.io
 
       - name: Checkout branch for GitHub Pages
         uses: actions/checkout@v1
@@ -33,7 +33,7 @@ jobs:
           submodules: true
 
       - name: Copy built site files into Git branch
-        run: cp -r ~/www/site ./
+        run: cp -r ~/www/phec0fr9kuf.github.io ./
 
       - name: Add and Commit changes to built-site branch
         run: |
@@ -47,3 +47,14 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: built-site
+
+      # - name: Initialize Pull Request
+        # uses: gha-utilities/init-pull-request@v0.0.1
+        # with:
+          # pull_request_token: ${{ secrets.GITHUB_TOKEN }}
+          # head: built-site
+          # base: gh-pages
+          # title: 'Updates site files from latest Actions build'
+          # body: >
+            # Perhaps a multi-line description
+            # about latest features and such.
