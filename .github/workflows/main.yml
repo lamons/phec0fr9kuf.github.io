@@ -24,13 +24,13 @@ jobs:
         uses: actions/setup-ruby@v1.0.0
 
       - name: Install jekyll
-        run: cd ~/A && gem install jekyll
+        run: cd /home/runner/work/phec0fr9kuf.github.io/~/A && gem install jekyll
 
       - name: Build & Deploy
         env:
          deploy_token: ${{ secrets.DEPLOY_TOKEN }}
         run: |
-          jekyll build --destination ~/B
+          jekyll build --destination /home/runner/work/phec0fr9kuf.github.io/~/B
           cd ~/B
           git add -A
           git commit -m "update built site"
