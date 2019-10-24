@@ -12,26 +12,27 @@ jobs:
         uses: actions/checkout@master
         with:
           ref: gh-pages
-          path: ~/A
+          path: A
 
       - name: Checkout the built site branch
         uses: actions/checkout@master
         with:
           ref: built-site
-          path: ~/B
+          path: B
 
       - name: Setup Ruby
         uses: actions/setup-ruby@v1.0.0
 
       - name: Install jekyll
-        run: cd /home/runner/work/phec0fr9kuf.github.io/~/A && gem install jekyll
+        run: cd /home/runner/work/phec0fr9kuf.github.io/A/ && gem install jekyll
 
       - name: Build & Deploy
         env:
          deploy_token: ${{ secrets.DEPLOY_TOKEN }}
         run: |
-          jekyll build --destination /home/runner/work/phec0fr9kuf.github.io/~/B
-          cd ~/B
+          cd /home/runner/work/phec0fr9kuf.github.io/A/
+          jekyll build --destination /home/runner/work/phec0fr9kuf.github.io/B/
+          cd /home/runner/work/phec0fr9kuf.github.io/B/
           git add -A
           git commit -m "update built site"
           git push origin built-site
