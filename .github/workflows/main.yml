@@ -27,7 +27,7 @@ jobs:
         run: cd ~/A && gem install jekyll
 
       - name: Build & Deploy
-        with:
+        env:
          deploy_token: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           jekyll build --destination ~/B
